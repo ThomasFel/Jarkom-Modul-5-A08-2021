@@ -364,11 +364,13 @@ iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j
 -  `-m connlimit` digunakan untuk mendefinisikan *rule connection limit*.
 -  `--connlimit-above 3` digunakan untuk *limit* yang ditangkap paket sebanyak > 3.
 -  `--connlimit-mask 0` digunakan untuk mengizinkan hanya 3 koneksi untuk tiap *subnet* dalam satu waktu.
--  `j DROP` digunakan untuk men-*drop* paket.
+-  `-j DROP` digunakan untuk men-*drop* paket.
 
-### 4 NODE BERBEDA (BEBAS)
+### 4 *Node* Berbeda (Bebas)
 
 Kita bisa melakukan *testing* dengan *ping* ke arah **Jipangu** atau **Doriki** secara bersamaan pada 4 *node* yang berbeda. Sebagai contoh, kita lakukan *ping* yang mengarah ke **Jipangu** pada *node* **Blueno**, **Cipher**, **Elena**, dan **Fukurou**.
+
+<img src="https://user-images.githubusercontent.com/37539546/145632840-b57f8bd2-a6d0-43b7-ae6c-2c73b05152db.gif" width="500">
 
 ## Soal 4
 
@@ -377,11 +379,69 @@ Kita bisa melakukan *testing* dengan *ping* ke arah **Jipangu** atau **Doriki** 
 
 ### Jawaban:
 
+### Doriki
+
+Masukkan *command* berikut pada node **Doriki**:
+```
+# BLUENO
+iptables -A INPUT -s 10.3.7.0/25 -m time --timestart 07:00 --timestop 15:00 --weekdays Mon,Tue,Wed,Thu -j ACCEPT
+iptables -A INPUT -s 10.3.7.0/25 -j REJECT
+# CIPHER
+iptables -A INPUT -s 10.3.0.0/22 -m time --timestart 07:00 --timestop 15:00 --weekdays Mon,Tue,Wed,Thu -j ACCEPT
+iptables -A INPUT -s 10.3.0.0/22 -j REJECT
+```
+- `-A INPUT` digunakan untuk mendefinisikan *chain* **INPUT**.
+- `-s [IP Blueno/Cipher]` digunakan untuk mendefinisikan protokol alamat asal paket dari **Blueno**/**Cipher**.
+-  `-m time` digunakan untuk mendefinisikan *rule time*.
+-  `--timestart-xx:xx --timestop xx:xx` digunakan untuk mendefinisikan waktu mulai dan berhenti.
+-  `--weekdays xxx,xxx,xxx` digunakan untuk mendefinisikan hari.
+-  `-j ACCEPT` digunakan untuk menerima paket.
+-  `-j REJECT` digunakan untuk menolak paket.
+
+### Blueno atau Cipher
+
+Kita bisa melakukan *testing* dengan mengatur ke waktu tertentu menggunakan *command* `date -s "dd/MMM/yyyy hh:mm:ss"` dan *ping* ke arah **Doriki** pada *node* **Blueno** atau **Cipher**.
+
+- Tanggal: **Kamis, 9 Desember 2021 pukul 13.00** (bisa diakses)
+
+  <img src="https://user-images.githubusercontent.com/37539546/145637065-6a49ae6f-a8ea-497b-9f76-db2171b66e5f.JPG" width="500">
+  
+- Tanggal: **Sabtu, 4 Desember 2021 pukul 07.00** (tidak bisa diakses)
+
+  <img src="https://user-images.githubusercontent.com/37539546/145637331-2c0ad4f1-4d8c-4621-a8c5-203e2bcc7c00.JPG" width="500">
+
 ## Soal 5
 
-### (Lanjutan) 2. Akses dari *subnet* Elena dan Fukuro hanya diperbolehkan pada pukul 15.01 hingga pukul 06.59 setiap harinya. Selain itu di-*reject*.
+### (Lanjutan) 2. Akses dari *subnet* Elena dan Fukurou hanya diperbolehkan pada pukul 15.01 hingga pukul 06.59 setiap harinya. Selain itu di-*reject*.
 
 ### Jawaban:
+
+### Doriki
+
+Masukkan *command* berikut pada node **Doriki**:
+```
+# ELENA
+iptables -A INPUT -s 10.3.4.0/23 -m time --timestart 07:00 --timestop 15:00 -j REJECT
+# FUKUROU
+iptables -A INPUT -s 10.3.6.0/24 -m time --timestart 07:00 --timestop 15:00 -j REJECT
+```
+- `-A INPUT` digunakan untuk mendefinisikan *chain* **INPUT**.
+- `-s [IP Elena/Fukurou]` digunakan untuk mendefinisikan protokol alamat asal paket dari **Elena**/**Fukurou**.
+-  `-m time` digunakan untuk mendefinisikan *rule time*.
+-  `--timestart-xx:xx --timestop xx:xx` digunakan untuk mendefinisikan waktu mulai dan berhenti.
+-  `-j REJECT` digunakan untuk menolak paket.
+
+### Elena atau Fukurou
+
+Kita bisa melakukan *testing* dengan mengatur ke waktu tertentu menggunakan *command* `date -s "dd/MMM/yyyy hh:mm:ss"` dan *ping* ke arah **Doriki** pada *node* **Elena** atau **Fukurou**.
+
+- Tanggal: **Minggu, 6 Desember 2021 pukul 17.00** (bisa diakses)
+
+  <img src="https://user-images.githubusercontent.com/37539546/145638317-73bcfe25-1659-4c57-9c0d-ed188f6c2453.JPG" width="500">
+  
+- Tanggal: **Jumat, 10 Desember 2021 pukul 10.00** (tidak bisa diakses)
+
+  <img src="https://user-images.githubusercontent.com/37539546/145638096-df458dce-244e-460c-a7ef-de31b3f386c8.JPG" width="500">
 
 ## Soal 6
 
