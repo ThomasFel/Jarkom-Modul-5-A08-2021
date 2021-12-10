@@ -327,11 +327,11 @@ iptables -A FORWARD -p tcp --dport 80 -d 10.3.7.128/29 -i eth0 -j DROP
 - `-A FORWARD` digunakan untuk mendefinisikan *chain* **FORWARD**.
 - `-p tcp` digunakan untuk mendefinisikan protokol **TCP**.
 -  `80` digunakan untuk mendefinisikan *port* **80**.
--  `d 10.3.7.128/29`, digunakan untuk mendefinisikan alamat tujuan dari paket (dalam hal ini DHCP Server dan DNS Server) yang berada pada **10.3.7.128/29**.
--  `i eth0`, digunakan untuk memasukkan paket dari **eth0 Foosha**.
--  `-j DROP`, digunakan untuk men-*drop* paket.
+-  `d 10.3.7.128/29` digunakan untuk mendefinisikan alamat tujuan dari paket (dalam hal ini DHCP Server dan DNS Server) yang berada pada **10.3.7.128/29**.
+-  `i eth0` digunakan untuk memasukkan paket dari **eth0 Foosha**.
+-  `-j DROP` digunakan untuk men-*drop* paket.
 
-### Foosha atau Jipangu/Doriki
+### Foosha atau Jipangu & Doriki
 
 Kita bisa melakukan *testing* dengan 2 cara, yaitu dengan *ping* website yang berprotokol HTTP pada **Jipangu**/**Doriki** ataupun dengan `nmap -p 80 10.3.7.128` pada **Foosha**.
 
@@ -352,6 +352,23 @@ Kita bisa melakukan *testing* dengan 2 cara, yaitu dengan *ping* website yang be
 ### Karena kelompok kalian maksimal terdiri dari 3 orang, Luffy meminta kalian untuk membatasi DHCP dan DNS Server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan menggunakan iptables, selebihnya di-*drop*.
 
 ### Jawaban:
+
+### Jipangu dan Doriki
+
+Pada kedua *node*, masukkan *command* berikut:
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
+```
+- `-A INPUT` digunakan untuk mendefinisikan *chain* **INPUT**.
+- `-p icmp` digunakan untuk mendefinisikan protokol **ICMP**.
+-  `-m connlimit` digunakan untuk mendefinisikan *rule connection limit*.
+-  `--connlimit-above 3` digunakan untuk *limit* yang ditangkap paket sebanyak > 3.
+-  `--connlimit-mask 0` digunakan untuk mengizinkan hanya 3 koneksi untuk tiap *subnet* dalam satu waktu.
+-  `j DROP` digunakan untuk men-*drop* paket.
+
+### 4 NODE BERBEDA (BEBAS)
+
+Kita bisa melakukan *testing* dengan *ping* ke arah **Jipangu** atau **Doriki** secara bersamaan pada 4 *node* yang berbeda. Sebagai contoh, kita lakukan *ping* yang mengarah ke **Jipangu** pada *node* **Blueno**, **Cipher**, **Elena**, dan **Fukurou**.
 
 ## Soal 4
 
