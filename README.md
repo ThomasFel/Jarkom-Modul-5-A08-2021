@@ -318,6 +318,35 @@ service isc-dhcp-server status
 
 ### Jawaban:
 
+### Foosha
+
+Masukkan *command* berikut pada node **Foosha**:
+```
+iptables -A FORWARD -p tcp --dport 80 -d 10.3.7.128/29 -i eth0 -j DROP
+```
+- `-A FORWARD` digunakan untuk mendefinisikan *chain* **FORWARD**.
+- `-p tcp` digunakan untuk mendefinisikan protokol **TCP**.
+-  `80` digunakan untuk mendefinisikan *port* **80**.
+-  `d 10.3.7.128/29`, digunakan untuk mendefinisikan alamat tujuan dari paket (dalam hal ini DHCP Server dan DNS Server) yang berada pada **10.3.7.128/29**.
+-  `i eth0`, digunakan untuk memasukkan paket dari **eth0 Foosha**.
+-  `-j DROP`, digunakan untuk men-*drop* paket.
+
+### Foosha atau Jipangu/Doriki
+
+Kita bisa melakukan *testing* dengan 2 cara, yaitu dengan *ping* website yang berprotokol HTTP pada **Jipangu**/**Doriki** ataupun dengan `nmap -p 80 10.3.7.128` pada **Foosha**.
+
+- Menggunakan *ping*
+
+  <img src="https://user-images.githubusercontent.com/37539546/145627329-568b8b04-c912-43c7-a312-bf9cd9ada01a.JPG" width="600">
+  
+  <img src="https://user-images.githubusercontent.com/37539546/145627654-f409a53b-0472-42bb-a51c-99fd110ddc1b.JPG" width="600">
+
+- Menggunakan `nmap`
+
+  <img src="https://user-images.githubusercontent.com/37539546/145626901-3e881362-ef77-4df0-9768-0ee0974a4a51.JPG" width="500">
+  
+  <img src="https://user-images.githubusercontent.com/37539546/145628119-7b8b1b60-4e82-4ef9-890c-ff8faceae0df.JPG" width="500">
+
 ## Soal 3
 
 ### Karena kelompok kalian maksimal terdiri dari 3 orang, Luffy meminta kalian untuk membatasi DHCP dan DNS Server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan menggunakan iptables, selebihnya di-*drop*.
