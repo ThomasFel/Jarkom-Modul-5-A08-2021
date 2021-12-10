@@ -19,8 +19,8 @@ Anggota:
 Setelah kalian mempelajari semua modul yang telah diberikan, Luffy ingin meminta bantuan untuk terakhir kalinya kepada kalian. Dan kalian dengan senang hati mau membantu Luffy.
 
 -   Tugas pertama kalian yaitu membuat topologi jaringan sesuai dengan rancangan yang diberikan Luffy di bawah ini:
-    
-    <img src="https://lh4.googleusercontent.com/ty6LE-eYo6B_En_g88XeLYHxGuZ7WyNTGKJPyNGk5pg7dq1dkiAZUDRNZCa_IPc454HQcbMKtwqACJ6UcWcSoO4pE7Mmx4TRkEPRvQc1n5ypBQezF-rpLlHdESEu6xc_2-w7gPz4" width="600">
+
+    <img src="https://user-images.githubusercontent.com/37539546/145604545-0d982687-d091-4332-af24-f384dda6c876.JPG" width="600">
     
     **Keterangan:**
     - **Doriki** adalah **DNS Server**
@@ -40,6 +40,277 @@ Setelah kalian mempelajari semua modul yang telah diberikan, Luffy ingin meminta
 ### Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Foosha menggunakan iptables, tetapi Luffy tidak ingin menggunakan MASQUERADE.
 
 ### Jawaban:
+
+- Pertama membagi *subnet* (*subnetting*) terhadap topologi. Di sini kelompok kami menggunakan teknik **VLSM** (*Variable Length Subnet Masking*) dalam pembagiannya.
+
+  <img src="https://user-images.githubusercontent.com/37539546/145599487-17bb884c-838c-4d7d-8ab4-e5e3f35180b9.jpg" width="600">
+
+- Penentuan jumlah alamat IP yang dibutuhkan tiap *subnet* dan ***labelling netmask*** berdasarkan jumlah IP. Berdasarkan hasil perhitungan, maka menggunakan *length* **/21** untuk *netmask*-nya.
+
+  <img src="https://user-images.githubusercontent.com/37539546/145600244-c5ec8984-69e2-4f5a-b08d-75e316fc5a6d.png" width="600">
+
+- Pembuatan ***tree subnet*** untuk nantinya membagi IP berdasarkan **NID** dan ***netmask***-nya.
+
+  <img src="https://user-images.githubusercontent.com/37539546/145600501-c342578e-0110-44b5-87e5-52a821f02820.jpg" width=600>
+
+- Pembagian IP dan *netmask* dengan tabel berdasarkan ***tree subnet*** yang sudah dibuat.
+
+  <img src="https://user-images.githubusercontent.com/37539546/145600741-5c76168b-751a-4241-a0e0-eb78cf81f98c.png" width=550>
+
+Kemudian, pada **GNS3** membuat topologi sesuai permintaan soal. *Setting network* masing-masing *node* dengan fitur `Edit network configuration` yang ada di menu `Configure` sesuai pembagian IP menggunanakan VLSM sebelumnya. Berikut konfigurasinya:
+
+- Foosha (Router)
+  ```
+  auto eth0
+  iface eth0 inet dhcp
+
+  auto eth1
+  iface eth1 inet static
+  address 10.3.7.146
+  netmask 255.255.255.252
+
+  auto eth2
+  iface eth2 inet static
+  address 10.3.7.149
+  netmask 255.255.255.252
+  ```
+  
+- Water7 (Router & DHCP Relay)
+  ```
+  auto eth0
+  iface eth0 inet static
+  address 10.3.7.145
+  netmask 255.255.255.252
+  gateway 10.3.7.146
+
+  auto eth1
+  iface eth1 inet static
+  address 10.3.7.1
+  netmask 255.255.255.128
+
+  auto eth2
+  iface eth2 inet static
+  address 10.3.7.129
+  netmask 255.255.255.248
+
+  auto eth3
+  iface eth3 inet static
+  address 10.3.0.1
+  netmask 255.255.252.0
+  ```
+  
+- Guanhao (Router & DHCP Relay)
+  ```
+  auto eth0
+  iface eth0 inet static
+  address 10.3.7.150
+  netmask 255.255.255.252
+  gateway 10.3.7.149
+
+  auto eth1
+  iface eth1 inet static
+  address 10.3.4.1
+  netmask 255.255.254.0
+
+  auto eth2
+  iface eth2 inet static
+  address 10.3.7.137
+  netmask 255.255.255.248
+
+  auto eth3
+  iface eth3 inet static
+  address 10.3.6.1
+  netmask 255.255.255.0
+  ```
+  
+- Doriki (DNS Server)
+  ```
+  auto eth0
+  iface eth0 inet static
+  address 10.3.7.130
+  netmask 255.255.255.248
+  gateway 10.3.7.129
+  ```
+  
+- Jipangu (DHCP Server)
+  ```
+  auto eth0
+  iface eth0 inet static
+  address 10.3.7.131
+  netmask 255.255.255.248
+  gateway 10.3.7.129
+  ```
+  
+- Maingate (Web Server)
+  ```
+  auto eth0
+  iface eth0 inet static
+  address 10.3.7.139
+  netmask 255.255.255.248
+  gateway 10.3.7.137
+  ```
+  
+- Jorge (Web Server)
+  ```
+  auto eth0
+  iface eth0 inet static
+  address 10.3.7.138
+  netmask 255.255.255.248
+  gateway 10.3.7.137
+  ```
+  
+- Blueno (Client)
+  ```
+  auto eth0
+  iface eth0 inet dhcp
+  ```
+  
+- Cipher (Client)
+  ```
+  auto eth0
+  iface eth0 inet dhcp
+  ```
+  
+- Elena (Client)
+  ```
+  auto eth0
+  iface eth0 inet dhcp
+  ```
+  
+- Fukurou (Client)
+  ```
+  auto eth0
+  iface eth0 inet dhcp
+  ```
+
+### Foosha
+
+Setelah selesai mengonfigurasi *node*, jalankan *command* berikut pada *router* `Foosha` untuk pengaturan lalu lintas komputer.
+```
+iptables -t nat -A POSTROUTING -s 10.3.0.0/21 -o eth0 -j SNAT --to-source [IP Foosha]
+```
+
+Sebagai catatan, karena IP Foosha akan berubah-ubah, dapat menggunakan *command* `ip a` untuk mendapatkan IP Foosha, contohnya seperti gambar di bawah.
+
+<img src="https://user-images.githubusercontent.com/37539546/145622800-29445b68-e3e7-4f7c-973b-d0493ba505bc.JPG" width="600">
+
+Lalu, lakukan *routing* pada **Foosha** seperti berikut:
+```
+#NODE KIRI
+route add -net 10.3.7.128 netmask 255.255.255.248 gw 10.3.7.145
+route add -net 10.3.7.0 netmask 255.255.255.128 gw 10.3.7.145
+route add -net 10.3.0.0 netmask 255.255.252.0 gw 10.3.7.145
+#NODE KANAN
+route add -net 10.3.4.0 netmask 255.255.255.0 gw 10.3.7.150
+route add -net 10.3.6.0 netmask 255.255.254.0 gw 10.3.7.150
+route add -net 10.3.7.136 netmask 255.255.255.248 gw 10.3.7.150
+```
+
+*Testing* pada **Foosha** dengan `ping` ke [**google.com**](https://www.google.com).
+
+<img src="https://user-images.githubusercontent.com/37539546/145623774-ca9ca28e-c8b2-4819-b040-bbb2424c9601.JPG" width="600">
+
+### Semua node (kecuali Foosha)
+
+Agar *node*-*node* lainnya dapat mengakses internet, jalankan *command* berikut dan gunakan IP DNS dari `Foosha`.
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+### Water7 dan Guanhao
+
+Lakukan *setting* **DHCP Relay** dengan *install* terlebih dahulu. *Command* yang dijalankan adalah sebagai berikut.
+```
+apt-get update
+apt-get install isc-dhcp-relay -y
+```
+
+Buka *file* **/etc/default/isc-dhcp-relay** dan edit seperti konfigurasi berikut.
+
+<img src="https://user-images.githubusercontent.com/37539546/145618270-3426a8ba-aff3-45e4-b7cb-fa0ed8136870.JPG" width="600">
+
+*Restart* **DHCP Relay**.
+```
+service isc-dhcp-relay restart
+```
+
+Untuk memastikan apakah DHCP Relay berjalan, dapat menggunakan *command* berikut.
+```
+service isc-dhcp-relay status
+```
+
+### Jipangu
+
+Lakukan *setting* **DHCP Server** dengan *install* terlebih dahulu. *Command* yang dijalankan adalah sebagai berikut.
+```
+apt-get update
+apt-get install isc-dhcp-server -y
+```
+
+Buka *file* **/etc/default/isc-dhcp-server** dan edit bagian paling bawah seperti konfigurasi berikut.
+
+<img src="https://user-images.githubusercontent.com/37539546/145621170-16dc55d9-c641-4c81-b1de-749a3777769f.JPG" width="500">
+
+Buka *file* lagi, yaitu **/etc/dhcp/dhcpd.conf** dan edit seperti konfigurasi berikut.
+```
+subnet 10.3.7.0 netmask 255.255.255.128 {
+    range 10.3.7.2 10.3.7.126;
+    option routers 10.3.7.1;
+    option broadcast-address 10.3.7.127;
+    option domain-name-servers 10.3.7.130;
+    default-lease-time 600;
+    max-lease-time 7200;
+}
+
+# Cipher (A3)
+subnet 10.3.0.0 netmask 255.255.252.0 {
+    range 10.3.0.2 10.3.3.254;
+    option routers 10.3.0.1;
+    option broadcast-address 10.3.3.255;
+    option domain-name-servers 10.3.7.130;
+    default-lease-time 600;
+    max-lease-time 7200;
+}
+
+# Elena (A6)
+subnet 10.3.4.0 netmask 10.3.254.0 {
+    range 10.3.4.2 10.3.5.254;
+    option routers 10.3.4.1;
+    option broadcast-address 10.3.5.255;
+    option domain-name-servers 10.3.7.130;
+    default-lease-time 600;
+    max-lease-time 7200;
+}
+
+# Fukurou (A7)
+subnet 10.3.6.0 netmask 255.255.255.0 {
+    range 10.3.6.2 10.3.6.254;
+    option routers 10.3.6.1;
+    option broadcast-address 10.3.6.255;
+    option domain-name-servers 10.3.7.130;
+    default-lease-time 600;
+    max-lease-time 7200;
+}
+
+# Open Way to Router
+subnet 10.3.7.128 netmask 255.255.255.248 {
+    option routers 10.3.7.129;
+} 
+```
+
+*Restart* **DHCP Server**.
+```
+service isc-dhcp-server restart
+```
+
+Perlu diketahui, apabila muncul *fail* seperti di bawah, dapat melakukan *restart* DHCP Server kembali.
+
+<img src="https://user-images.githubusercontent.com/37539546/141606738-ea9007d7-d26e-4f15-ac6a-8246d6fa7df7.JPG" width="600">
+
+Untuk memastikan apakah DHCP Server berjalan, dapat menggunakan *command* berikut.
+```
+service isc-dhcp-server status
+```
 
 ## Soal 2
 
