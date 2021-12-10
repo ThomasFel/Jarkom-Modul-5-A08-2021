@@ -295,7 +295,7 @@ subnet 10.3.6.0 netmask 255.255.255.0 {
 # Open Way to Router
 subnet 10.3.7.128 netmask 255.255.255.248 {
     option routers 10.3.7.129;
-} 
+}
 ```
 
 *Restart* **DHCP Server**.
@@ -448,3 +448,74 @@ Kita bisa melakukan *testing* dengan mengatur ke waktu tertentu menggunakan *com
 ### Karena kita memiliki 2 Web Server, Luffy ingin Guanhao di-*setting* sehingga setiap *request* dari *client* yang mengakses DNS Server akan didistribusikan secara bergantian pada Jorge dan Maingate. Luffy berterima kasih pada kalian karena telah membantunya. Luffy juga mengingatkan agar semua aturan iptables harus disimpan pada sistem atau paling tidak kalian menyediakan *script* sebagai *backup*.
 
 ### Jawaban:
+
+### Doriki
+
+Melakukan instalasi **bind9** terlebih dahulu pada `Doriki` dengan *update package list*. *Command* yang dijalankan adalah sebagai berikut.
+```
+apt-get update
+apt-get install bind9 -y
+```
+Buka *file* **/etc/bind/named.conf.options** dan edit seperti konfigurasi berikut.
+
+<img src="https://user-images.githubusercontent.com/37539546/141607951-e806b4f2-c11c-4de7-8f9f-d11d8d04fdf9.JPG" width="600">
+
+Buat domain [**jarkoma08.com**](jarkoma08.com). Lakukan *command* seperti berikut pada `Doriki`.
+```
+nano /etc/bind/named.conf.local
+```
+
+Isi konfigurasi domain [**jarkoma08.com**](jarkoma08.com) sesuai sintaks berikut.
+```
+zone "jarkoma08.com" {
+    type master;
+    file "/etc/bind/jarkom/jarkoma08.com";
+};
+```
+
+Buat folder baru, yaitu **jarkom** pada **/etc/bind**.
+```
+mkdir /etc/bind/jarkom
+```
+
+*Copy file* **db.local** ke dalam folder **jarkom** yang baru dibuat dan ubah namanya menjadi [**super.franky.a08.com**](super.franky.a08.com).
+```
+cp /etc/bind/db.local /etc/bind/jarkom/jarkoma08.com
+```
+
+Buka *file* [**jarkoma08.com**](jarkoma08.com) dan edit seperti konfigurasi berikut.
+
+<img src="https://user-images.githubusercontent.com/37539546/145640161-29cbe348-fd3a-4095-b9eb-daeede6b70e9.JPG" width="500">
+
+*Restart* **bind9**.
+```
+service bind9 restart
+```
+
+### Guanhao
+
+Masukkan *command* berikut pada node **Guanhao**:
+```
+iptables -t nat -A PREROUTING -d 10.3.7.136 -p tcp --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.3.7.138
+iptables -t nat -A PREROUTING -d 10.3.7.136 -p tcp --dport 80 -j DNAT --to-destination 10.3.7.139
+```
+
+### Maingate dan Jorge
+
+Melakukan instalasi **Apache2** pada **Maingate** dan **Jorge** dengan *update package list*. *Command* yang dijalankan adalah sebagai berikut.
+```
+apt-get update
+apt-get install apache2 -y
+```
+
+### Maingate/Jorge dan *Client* (Bebas)
+
+Kita bisa melakukan *testing* dengan menginputkan sembarang kata pada *client*. Sebelumnya *install* **netcat** pada *node* **Maingate** dan **Jorge** terlebih dahulu.
+```
+apt-get update
+apt-get install netcat -y
+```
+
+Setelah itu, masukkan perintah `nc -l -p 80` pada **Maingate** dan **Jorge**, dan pada *client* masukkan perintah `nc 10.3.7.136 80` atau menggunakan *domain* `nc jarkoma08.com 80`. Terakhir inputkan sembarang kata.
+
+## Kendala
