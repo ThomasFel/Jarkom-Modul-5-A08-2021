@@ -66,13 +66,13 @@ Kemudian, pada **GNS3** membuat topologi sesuai permintaan soal. *Setting networ
 
   auto eth1
   iface eth1 inet static
-  address 10.3.7.146
-  netmask 255.255.255.252
+      address 10.3.7.146
+      netmask 255.255.255.252
 
   auto eth2
   iface eth2 inet static
-  address 10.3.7.149
-  netmask 255.255.255.252
+      address 10.3.7.149
+      netmask 255.255.255.252
   ```
   
 - Water7 (Router & DHCP Relay)
@@ -80,83 +80,83 @@ Kemudian, pada **GNS3** membuat topologi sesuai permintaan soal. *Setting networ
   auto eth0
   iface eth0 inet static
   address 10.3.7.145
-  netmask 255.255.255.252
-  gateway 10.3.7.146
+      netmask 255.255.255.252
+      gateway 10.3.7.146
 
   auto eth1
   iface eth1 inet static
-  address 10.3.7.1
-  netmask 255.255.255.128
+      address 10.3.7.1
+      netmask 255.255.255.128
 
   auto eth2
   iface eth2 inet static
-  address 10.3.7.129
-  netmask 255.255.255.248
+      address 10.3.7.129
+      netmask 255.255.255.248
 
   auto eth3
   iface eth3 inet static
-  address 10.3.0.1
-  netmask 255.255.252.0
+      address 10.3.0.1
+      netmask 255.255.252.0
   ```
   
 - Guanhao (Router & DHCP Relay)
   ```
   auto eth0
   iface eth0 inet static
-  address 10.3.7.150
-  netmask 255.255.255.252
-  gateway 10.3.7.149
+      address 10.3.7.150
+      netmask 255.255.255.252
+      gateway 10.3.7.149
 
   auto eth1
   iface eth1 inet static
-  address 10.3.4.1
-  netmask 255.255.254.0
+      address 10.3.4.1
+      netmask 255.255.254.0
 
   auto eth2
   iface eth2 inet static
-  address 10.3.7.137
-  netmask 255.255.255.248
+      address 10.3.7.137
+      netmask 255.255.255.248
 
   auto eth3
   iface eth3 inet static
-  address 10.3.6.1
-  netmask 255.255.255.0
+      address 10.3.6.1
+      netmask 255.255.255.0
   ```
   
 - Doriki (DNS Server)
   ```
   auto eth0
   iface eth0 inet static
-  address 10.3.7.130
-  netmask 255.255.255.248
-  gateway 10.3.7.129
+      address 10.3.7.130
+      netmask 255.255.255.248
+      gateway 10.3.7.129
   ```
   
 - Jipangu (DHCP Server)
   ```
   auto eth0
   iface eth0 inet static
-  address 10.3.7.131
-  netmask 255.255.255.248
-  gateway 10.3.7.129
+      address 10.3.7.131
+      netmask 255.255.255.248
+      gateway 10.3.7.129
   ```
   
 - Maingate (Web Server)
   ```
   auto eth0
   iface eth0 inet static
-  address 10.3.7.139
-  netmask 255.255.255.248
-  gateway 10.3.7.137
+      address 10.3.7.139
+      netmask 255.255.255.248
+      gateway 10.3.7.137
   ```
   
 - Jorge (Web Server)
   ```
   auto eth0
   iface eth0 inet static
-  address 10.3.7.138
-  netmask 255.255.255.248
-  gateway 10.3.7.137
+      address 10.3.7.138
+      netmask 255.255.255.248
+      gateway 10.3.7.137
   ```
   
 - Blueno (Client)
@@ -292,9 +292,12 @@ subnet 10.3.6.0 netmask 255.255.255.0 {
     max-lease-time 7200;
 }
 
-# Open Way to Router
+# Doriki & Jipangu (A1)
+subnet 10.3.7.136 netmask 255.255.255.248 {
+}
+
+# Jorge & Maingate (A8)
 subnet 10.3.7.128 netmask 255.255.255.248 {
-    option routers 10.3.7.129;
 }
 ```
 
@@ -311,6 +314,10 @@ Untuk memastikan apakah DHCP Server berjalan, dapat menggunakan *command* beriku
 ```
 service isc-dhcp-server status
 ```
+
+### Semua *Client*
+
+Sehabis mengonfigurasi **DHCP Server** dan **DHCP Relay**, *restart* semua *node client* agar *service* DHCP dapat berjalan. 
 
 ## Soal 2
 
@@ -333,7 +340,7 @@ iptables -A FORWARD -p tcp --dport 80 -d 10.3.7.128/29 -i eth0 -j DROP
 
 ### Foosha atau Jipangu & Doriki
 
-Kita bisa melakukan *testing* dengan 2 cara, yaitu dengan *ping* website yang berprotokol HTTP pada **Jipangu**/**Doriki** ataupun dengan `nmap -p 80 10.3.7.128` pada **Foosha**.
+Kita bisa melakukan *testing* dengan 2 cara, yaitu dengan *ping* website yang berprotokol HTTP pada **Jipangu**/**Doriki** ataupun dengan `nmap -p 80 10.3.7.128` pada **Foosha** (dalam hal ini perlu meng-*install* **netcat** pada *node* **Jipangu**/**Doriki**).
 
 - Menggunakan *ping*
 
@@ -341,11 +348,11 @@ Kita bisa melakukan *testing* dengan 2 cara, yaitu dengan *ping* website yang be
   
   <img src="https://user-images.githubusercontent.com/37539546/145627654-f409a53b-0472-42bb-a51c-99fd110ddc1b.JPG" width="600">
 
-- Menggunakan `nmap`
+- Menggunakan `nmap` (sebelumnya pada **Jipangu**/**Doriki** telah menjalankan *command* `nc -l -p 80`)
 
-  <img src="https://user-images.githubusercontent.com/37539546/145626901-3e881362-ef77-4df0-9768-0ee0974a4a51.JPG" width="500">
+  <img src="https://user-images.githubusercontent.com/37539546/145668984-93580d2c-1ba6-4a12-bcd6-8623412364f9.JPG" width="500">
   
-  <img src="https://user-images.githubusercontent.com/37539546/145628119-7b8b1b60-4e82-4ef9-890c-ff8faceae0df.JPG" width="500">
+  <img src="https://user-images.githubusercontent.com/37539546/145669001-1f981a77-a47c-462f-a219-15ea0326c7c0.JPG" width="500">
 
 ## Soal 3
 
@@ -449,49 +456,6 @@ Kita bisa melakukan *testing* dengan mengatur ke waktu tertentu menggunakan *com
 
 ### Jawaban:
 
-### Doriki
-
-Melakukan instalasi **bind9** terlebih dahulu pada `Doriki` dengan *update package list*. *Command* yang dijalankan adalah sebagai berikut.
-```
-apt-get update
-apt-get install bind9 -y
-```
-Buka *file* **/etc/bind/named.conf.options** dan edit seperti konfigurasi berikut.
-
-<img src="https://user-images.githubusercontent.com/37539546/141607951-e806b4f2-c11c-4de7-8f9f-d11d8d04fdf9.JPG" width="600">
-
-Buat domain [**jarkoma08.com**](jarkoma08.com). Lakukan *command* seperti berikut pada `Doriki`.
-```
-nano /etc/bind/named.conf.local
-```
-
-Isi konfigurasi domain [**jarkoma08.com**](jarkoma08.com) sesuai sintaks berikut.
-```
-zone "jarkoma08.com" {
-    type master;
-    file "/etc/bind/jarkom/jarkoma08.com";
-};
-```
-
-Buat folder baru, yaitu **jarkom** pada **/etc/bind**.
-```
-mkdir /etc/bind/jarkom
-```
-
-*Copy file* **db.local** ke dalam folder **jarkom** yang baru dibuat dan ubah namanya menjadi [**super.franky.a08.com**](super.franky.a08.com).
-```
-cp /etc/bind/db.local /etc/bind/jarkom/jarkoma08.com
-```
-
-Buka *file* [**jarkoma08.com**](jarkoma08.com) dan edit seperti konfigurasi berikut.
-
-<img src="https://user-images.githubusercontent.com/37539546/145640161-29cbe348-fd3a-4095-b9eb-daeede6b70e9.JPG" width="500">
-
-*Restart* **bind9**.
-```
-service bind9 restart
-```
-
 ### Guanhao
 
 Masukkan *command* berikut pada node **Guanhao**:
@@ -516,6 +480,6 @@ apt-get update
 apt-get install netcat -y
 ```
 
-Setelah itu, masukkan perintah `nc -l -p 80` pada **Maingate** dan **Jorge**, dan pada *client* masukkan perintah `nc 10.3.7.136 80` atau menggunakan *domain* `nc jarkoma08.com 80`. Terakhir inputkan sembarang kata.
+Setelah itu, masukkan perintah `nc -l -p 80` pada **Maingate** dan **Jorge**, dan pada *client* masukkan perintah `nc 10.3.7.136 80`. Terakhir inputkan sembarang kata pada *client*. Pada contoh di bawah menggunakan *client* **Elena** dan **Cipher**.
 
 ## Kendala
