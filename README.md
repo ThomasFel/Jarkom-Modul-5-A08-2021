@@ -485,7 +485,7 @@ Setelah itu, masukkan perintah `nc -l -p 80` pada **Maingate** dan **Jorge**, da
 <img src="https://user-images.githubusercontent.com/37539546/145670056-022d2c73-b108-4a7f-a7fb-b21d472570fd.gif" width="500">
 
 ## Kendala
-- Agak bingung di nomor 2 karena output port 80 kadang filtered kadang open ketika dijalankan ulang.
-- Bingung testing nomor 6 karena tidak ada di modul.
+- Agak bingung di nomor 2 karena output *port* 80 kadang *filtered* kadang *open* ketika dijalankan ulang.
+- Bingung *testing* nomor 6 karena tidak ada di modul.
 - Beberapa bagian soal perlu banyak eksplorasi di luar modul.
-- Awal-awal sempat memakai iptables MASQUERADE untuk instalasi semua node.
+- Awal-awal sempat memakai `iptables` **MASQUERADE** untuk instalasi semua *node*.
