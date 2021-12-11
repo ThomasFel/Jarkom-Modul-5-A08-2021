@@ -377,7 +377,7 @@ iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j
 
 Kita bisa melakukan *testing* dengan *ping* ke arah **Jipangu** atau **Doriki** secara bersamaan pada 4 *node* yang berbeda. Sebagai contoh, kita lakukan *ping* yang mengarah ke **Jipangu** pada *node* **Blueno**, **Cipher**, **Elena**, dan **Fukurou**.
 
-<img src="https://user-images.githubusercontent.com/37539546/145632840-b57f8bd2-a6d0-43b7-ae6c-2c73b05152db.gif" width="500">
+<img src="https://user-images.githubusercontent.com/37539546/145670019-acf3031a-33cd-4f08-b14b-da58dde765cc.gif" width="500">
 
 ## Soal 4
 
@@ -481,5 +481,7 @@ apt-get install netcat -y
 ```
 
 Setelah itu, masukkan perintah `nc -l -p 80` pada **Maingate** dan **Jorge**, dan pada *client* masukkan perintah `nc 10.3.7.136 80`. Terakhir inputkan sembarang kata pada *client*. Pada contoh di bawah menggunakan *client* **Elena** dan **Cipher**.
+
+<img src="https://user-images.githubusercontent.com/37539546/145670056-022d2c73-b108-4a7f-a7fb-b21d472570fd.gif" width="500">
 
 ## Kendala
