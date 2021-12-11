@@ -33,7 +33,7 @@ Setelah kalian mempelajari semua modul yang telah diberikan, Luffy ingin meminta
     
 -   Karena kalian telah belajar *subnetting* dan *routing*, Luffy ingin meminta kalian untuk membuat topologi tersebut menggunakan teknik **CIDR** atau **VLSM**.
 -   Setelah melakukan *subnetting*, kalian juga diharuskan melakukan *routing* agar setiap perangkat pada jaringan tersebut dapat terhubung.
--   Tugas berikutnya adalah memberikan IP pada *subnet* **Blueno**, **Cipher**, **Fukurou**, dan **Elena** secara dinamis menggunakan bantuan **DHCP Server**. Kemudian kalian ingat bahwa kalian harus setting **DHCP Relay** pada *router* yang menghubungkannya.
+-   Tugas berikutnya adalah memberikan IP pada *subnet* **Blueno**, **Cipher**, **Fukurou**, dan **Elena** secara dinamis menggunakan bantuan **DHCP Server**. Kemudian kalian ingat bahwa kalian harus *setting* **DHCP Relay** pada *router* yang menghubungkannya.
 
 ## Soal 1
 
