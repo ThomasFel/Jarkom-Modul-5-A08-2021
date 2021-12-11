@@ -1,4 +1,4 @@
-# Jarkom Modul 5 A08 2021
+# Jarkom Modul 1 A08 - 2021
 
 Anggota:
 -   05111940000030 - Bunga Fairuz Wijdan
