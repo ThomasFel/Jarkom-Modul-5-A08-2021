@@ -327,7 +327,7 @@ Sehabis mengonfigurasi **DHCP Server** dan **DHCP Relay**, *restart* semua *node
 
 ### Foosha
 
-Masukkan *command* berikut pada node **Foosha**:
+Masukkan *command* berikut pada *node* **Foosha**:
 ```
 iptables -A FORWARD -p tcp --dport 80 -d 10.3.7.128/29 -i eth0 -j DROP
 ```
@@ -388,7 +388,7 @@ Kita bisa melakukan *testing* dengan *ping* ke arah **Jipangu** atau **Doriki** 
 
 ### Doriki
 
-Masukkan *command* berikut pada node **Doriki**:
+Masukkan *command* berikut pada *node* **Doriki**:
 ```
 # BLUENO
 iptables -A INPUT -s 10.3.7.0/25 -m time --timestart 07:00 --timestop 15:00 --weekdays Mon,Tue,Wed,Thu -j ACCEPT
@@ -425,7 +425,7 @@ Kita bisa melakukan *testing* dengan mengatur ke waktu tertentu menggunakan *com
 
 ### Doriki
 
-Masukkan *command* berikut pada node **Doriki**:
+Masukkan *command* berikut pada *node* **Doriki**:
 ```
 # ELENA
 iptables -A INPUT -s 10.3.4.0/23 -m time --timestart 07:00 --timestop 15:00 -j REJECT
@@ -458,7 +458,7 @@ Kita bisa melakukan *testing* dengan mengatur ke waktu tertentu menggunakan *com
 
 ### Guanhao
 
-Masukkan *command* berikut pada node **Guanhao**:
+Masukkan *command* berikut pada *node* **Guanhao**:
 ```
 iptables -t nat -A PREROUTING -d 10.3.7.136 -p tcp --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.3.7.138
 iptables -t nat -A PREROUTING -d 10.3.7.136 -p tcp --dport 80 -j DNAT --to-destination 10.3.7.139
